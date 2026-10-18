@@ -1,0 +1,39 @@
+name: Verify Classpath
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_call:
+permissions:
+  contents: read
+jobs:
+  verify:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        java: ['21', '25']
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: ${{ matrix.java }}
+      - name: Compile with warnings as errors and run regressions
+        run: java tools/Build.java test
+      - name: Build the standalone JAR
+        run: java tools/Build.java package
+      - name: Offline packaged examples
+        shell: bash
+        run: |
+          java -jar dist/rudy-classpath-0.1.0.jar --version
+          java -jar dist/rudy-classpath-0.1.0.jar scan --target 21 --fail-on none examples/library-a.jar examples/library-b.jar
+          java -jar dist/rudy-classpath-0.1.0.jar explain demo.Version examples/library-a.jar
+          java -jar dist/rudy-classpath-0.1.0.jar scan --target 17 examples/multi-release.jar
+          java -jar dist/rudy-classpath-0.1.0.jar compare examples/before.classpath examples/after.classpath
+      - uses: actions/upload-artifact@v4
+        with:
+          name: classpath-${{ matrix.os }}-java-${{ matrix.java }}
+          path: dist/*.jar

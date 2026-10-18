@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="360" viewBox="0 0 1280 360" role="img" aria-labelledby="title desc">
+<title id="title">RUDY / CLASSPATH</title><desc id="desc">Know which class definition wins. Offline JVM archive and classpath review.</desc>
+<rect width="1280" height="360" rx="18" fill="#0a1118"/>
+<path d="M0 0h7v360H0" fill="#55e0b6"/>
+<path d="M64 257H1216" stroke="#24333d"/>
+<g fill="none" stroke="#142333"><path d="M900 0V238M960 0V238M1020 0V238M1080 0V238M1140 0V238M1200 0V238M880 44H1280M880 104H1280M880 164H1280M880 224H1280"/></g>
+<text x="64" y="48" fill="#55e0b6" font-family="Consolas,monospace" font-size="14" letter-spacing="4">RUDY SYSTEMS / DEVELOPER TOOLS</text>
+<text x="60" y="150" fill="#edf4f7" font-family="Arial,Helvetica,sans-serif" font-size="60" font-weight="700">RUDY <tspan fill="#55e0b6">/ CLASSPATH</tspan></text>
+<text x="64" y="206" fill="#b7c6ce" font-family="Arial,Helvetica,sans-serif" font-size="25">Know which class definition wins.</text>
+<g fill="none" stroke="#55e0b6" stroke-width="2"><rect x="955" y="64" width="66" height="42" rx="5"/><rect x="955" y="152" width="66" height="42" rx="5"/><rect x="1096" y="106" width="66" height="42" rx="5"/><path d="m1021 85 75 42m-75 46 75-46M1130 148v46"/></g>
+<text x="988" y="90" fill="#edf4f7" text-anchor="middle" font-family="Consolas,monospace" font-size="13">JAR A</text><text x="988" y="178" fill="#edf4f7" text-anchor="middle" font-family="Consolas,monospace" font-size="13">JAR B</text><text x="1129" y="132" fill="#55e0b6" text-anchor="middle" font-family="Consolas,monospace" font-size="13">CLASS</text>
+<text x="64" y="301" fill="#55e0b6" font-family="Consolas,monospace" font-size="15" letter-spacing="2">JAVA / CLASS RESOLUTION / MULTI-RELEASE / SERVICELOADER</text>
+<text x="1216" y="301" text-anchor="end" fill="#b7c6ce" font-family="Consolas,monospace" font-size="12" letter-spacing="1">v0.1.0 / DEVELOPER PREVIEW</text>
+</svg>
