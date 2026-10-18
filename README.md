@@ -51,7 +51,7 @@ ordered JARs + target Java + preview policy
 | Class compatibility | Checks major/minor headers, target version, preview opt-in, declaration/path consistency and versioned-directory ceilings |
 | Sealing review | Finds packages spanning origins when a participating manifest seals the package, including section overrides |
 | ServiceLoader review | Merges descriptor order, removes repeated provider names, reports missing definitions and incompatible constructor/class flags |
-| Classpath comparison | Added/removed binary names, changed provider inventories and changed effective class bytes |
+| Classpath comparison | Added/removed binary names, changed provider inventories and class bytes, plus ServiceLoader provider additions, removals and order changes |
 | Review outputs | Canonical JSON, text summaries, SARIF 2.1.0 and configurable exit gates |
 | Bounded input | Compressed/uncompressed byte budgets, entry/provider limits, CRC verification and strict metadata parsing |
 
@@ -131,13 +131,15 @@ Use `--format sarif` for pipeline collection or `--format text` for a summary.
 | Exit | Meaning |
 | :--- | :--- |
 | 0 | Completed below the selected scan gate, or completed an explanation/comparison |
-| 1 | Scan findings reached the threshold, or optional comparison gate detected a class-provider change |
+| 1 | Scan findings reached the threshold, or optional comparison gate detected a class-provider or ServiceLoader provider change |
 | 2 | Rejected input, unsupported usage, I/O failure or a documented resource limit |
 
 Output goes to stdout; diagnostics go to stderr. Threshold failures still emit
 their complete report. Explanations return `found: false` for absent names.
-Comparisons preserve both scans' findings but gate **class-provider changes**
-only; run `scan` separately to enforce the current classpath policy.
+Comparisons preserve both scans' findings and report changes to the merged
+ServiceLoader provider order. `--fail-on-change` gates class-provider and
+ServiceLoader provider changes; run `scan` separately to enforce the current
+classpath policy.
 
 ## Validation and architecture
 

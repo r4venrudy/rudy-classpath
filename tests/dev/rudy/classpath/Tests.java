@@ -591,6 +591,32 @@ public final class Tests {
                 "wrong class delta");
           });
       test(
+          "comparison detects ServiceLoader provider changes and order",
+          () -> {
+            Path before =
+                jar(
+                    Map.of(
+                        "META-INF/services/svc.API",
+                        text("svc.Good\nsvc.Missing\nsvc.Removed\n")),
+                    null);
+            Path after =
+                jar(
+                    Map.of(
+                        "META-INF/services/svc.API",
+                        text("svc.Missing\nsvc.Good\nsvc.Added\n")),
+                    null);
+            var comparison = Scanner.compare(scan(before), scan(after));
+            check(
+                comparison.serviceChanges()
+                    .equals(
+                        List.of(
+                            new Scanner.ServiceChange(
+                                "svc.API",
+                                List.of("svc.Good", "svc.Missing", "svc.Removed"),
+                                List.of("svc.Missing", "svc.Good", "svc.Added")))),
+                "service provider delta or order change missing");
+          });
+      test(
           "comparison policies must agree",
           () ->
               reject(
@@ -705,6 +731,33 @@ public final class Tests {
                     && out.toString(StandardCharsets.UTF_8)
                         .contains("effectiveBytesChanged\":true"),
                 "relative compare failed");
+          });
+      test(
+          "CLI compare change gate includes ServiceLoader provider changes",
+          () -> {
+            Path lists = Files.createDirectory(temp.resolve("service-lists"));
+            Path before =
+                jar(Map.of("META-INF/services/svc.API", text("svc.Good\n")), null);
+            Path after =
+                jar(Map.of("META-INF/services/svc.API", text("svc.Added\n")), null);
+            Files.copy(before, lists.resolve("before.jar"));
+            Files.copy(after, lists.resolve("after.jar"));
+            Files.writeString(lists.resolve("before"), "before.jar\n");
+            Files.writeString(lists.resolve("after"), "after.jar\n");
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            check(
+                Main.run(
+                            new String[] {
+                              "compare",
+                              "--fail-on-change",
+                              lists.resolve("before").toString(),
+                              lists.resolve("after").toString()
+                            },
+                            out,
+                            System.err)
+                        == 1
+                    && out.toString(StandardCharsets.UTF_8).contains("serviceChanges"),
+                "service provider change did not trip the CLI gate");
           });
       test(
           "output failures return exit 2",

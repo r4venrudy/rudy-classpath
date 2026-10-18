@@ -121,7 +121,8 @@ public final class Main {
             failChange
                 && (!comparison.added().isEmpty()
                     || !comparison.removed().isEmpty()
-                    || !comparison.changed().isEmpty());
+                    || !comparison.changed().isEmpty()
+                    || !comparison.serviceChanges().isEmpty());
       } else {
         String query = null;
         if (command.equals("explain")) {

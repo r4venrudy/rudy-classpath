@@ -63,6 +63,9 @@ public final class Scanner {
   public record Change(
       String name, boolean effectiveBytesChanged, List<Provider> before, List<Provider> after) {}
 
+  public record ServiceChange(
+      String name, List<String> beforeProviders, List<String> afterProviders) {}
+
   public record Comparison(
       String schema,
       int targetJava,
@@ -70,6 +73,7 @@ public final class Scanner {
       List<String> added,
       List<String> removed,
       List<Change> changed,
+      List<ServiceChange> serviceChanges,
       List<Finding> beforeFindings,
       List<Finding> afterFindings,
       List<String> notices) {}
@@ -468,19 +472,37 @@ public final class Scanner {
                 a.get(name).providers(),
                 b.get(name).providers()));
     }
+    Map<String, List<String>> beforeServices = serviceProviders(before.services());
+    Map<String, List<String>> afterServices = serviceProviders(after.services());
+    Set<String> serviceNames = new TreeSet<>(beforeServices.keySet());
+    serviceNames.addAll(afterServices.keySet());
+    List<ServiceChange> serviceChanges = new ArrayList<>();
+    for (String name : serviceNames) {
+      List<String> beforeProviders = beforeServices.getOrDefault(name, List.of());
+      List<String> afterProviders = afterServices.getOrDefault(name, List.of());
+      if (!beforeProviders.equals(afterProviders))
+        serviceChanges.add(new ServiceChange(name, beforeProviders, afterProviders));
+    }
     return new Comparison(
-        "rudy-classpath/compare/v1",
+        "rudy-classpath/compare/v2",
         before.targetJava(),
         before.preview(),
         added,
         removed,
         changed,
+        serviceChanges,
         before.findings(),
         after.findings(),
         List.of(
-            "Compares effective class-provider inventories; services, ordinary resources and module"
-                + " graphs are not compared.",
+            "Compares effective class-provider inventories and merged ServiceLoader provider"
+                + " order; ordinary resources and module graphs are not compared.",
             "Archive SHA-256 is origin identity: repacking a JAR can change provenance even if"
                 + " class bytes are unchanged."));
+  }
+
+  private static Map<String, List<String>> serviceProviders(List<Service> services) {
+    Map<String, List<String>> providers = new TreeMap<>();
+    for (Service service : services) providers.put(service.name(), service.providers());
+    return providers;
   }
 }

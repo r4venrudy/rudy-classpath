@@ -112,14 +112,15 @@ Archives receive positional IDs `jar-000` through `jar-031`.
 `rudy-classpath/explain/v1` returns the requested binary name, its providers and
 class-specific findings. An absent name returns found=false with exit 0.
 
-`rudy-classpath/compare/v1` reports added/removed names and changed ordered provider
+`rudy-classpath/compare/v2` reports added/removed names and changed ordered provider
 identities. Identity includes archive SHA-256, selected physical entry and class
 SHA-256. Filenames/positional IDs alone do not determine comparison equality.
 Repacking a JAR changes origin identity even when class bytes remain unchanged;
-effectiveBytesChanged distinguishes such provenance changes. Service metadata,
-ordinary resources and module graphs are not separately compared. Both scan
-finding arrays remain available; the optional change gate applies only to the
-class-provider delta, not those scan findings.
+effectiveBytesChanged distinguishes such provenance changes. Service provider
+changes report the merged provider names in classpath order before and after; the
+optional change gate includes additions, removals and order changes. Ordinary
+resources and module graphs are not separately compared. Both scan finding arrays
+remain available, but the change gate does not apply to those findings.
 
 JSON map keys are sorted, records are output-only, and reports have no timestamps.
 SARIF 2.1.0 has rule/subject/origin fingerprints and coverage notices, with no
