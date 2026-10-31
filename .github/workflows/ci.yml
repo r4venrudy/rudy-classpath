@@ -39,7 +39,7 @@ jobs:
           java -jar dist/rudy-classpath-0.1.0.jar explain demo.Version examples/library-a.jar
           java -jar dist/rudy-classpath-0.1.0.jar scan --target 17 examples/multi-release.jar
           java -jar dist/rudy-classpath-0.1.0.jar compare examples/before.classpath examples/after.classpath
-      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
         with:
           name: classpath-${{ matrix.os }}-java-${{ matrix.java }}
           path: dist/*.jar
