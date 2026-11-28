@@ -61,6 +61,9 @@ def validate_paths(records):
             if parent in paths and not paths[parent]:raise ValueError('file used as a release directory')
 
 
+MAX_XZ_STREAMS = 4096
+
+
 def verify_xz_envelope(path, limit):
     decoded = 0
     streams = 0
@@ -72,7 +75,7 @@ def verify_xz_envelope(path, limit):
             if not pending.startswith(bytes.fromhex("fd377a585a00")):
                 raise ValueError("invalid XZ stream header")
             streams += 1
-            if streams > 4096:
+            if streams > MAX_XZ_STREAMS:
                 raise ValueError("XZ stream count exceeds resource limit")
             decoder = lzma.LZMADecompressor(format=lzma.FORMAT_XZ, memlimit=128 * 1024 * 1024)
             while not decoder.eof:

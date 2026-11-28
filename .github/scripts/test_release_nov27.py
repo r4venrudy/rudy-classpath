@@ -51,3 +51,10 @@ class ArchiveBudgetCommands(unittest.TestCase):
         self.command(path,'--max-gzip-streams',2)
         self.rejection_restores(path,'--max-gzip-streams','MAX_GZIP_STREAMS',1,4096)
         self.assertEqual(guard.verify(path),(1,7))
+
+    def test_xz_stream_policy(self):
+        raw=tar_record('payload')+bytes(1024);path=self.folder/'fixture.tar.xz'
+        path.write_bytes(lzma.compress(raw[:1024])+lzma.compress(raw[1024:]))
+        self.command(path,'--max-xz-streams',2)
+        self.rejection_restores(path,'--max-xz-streams','MAX_XZ_STREAMS',1,4096)
+        self.assertEqual(guard.verify(path),(1,7))
