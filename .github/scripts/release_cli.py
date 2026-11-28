@@ -54,6 +54,9 @@ def archive_main(namespace):
     parser.add_argument("--max-path-metadata-bytes",type=positive_limit(namespace["MAX_PATH_METADATA"]),help="lower the built-in MAX_PATH_METADATA limit")
     parser.add_argument("--max-gzip-streams",type=positive_limit(namespace["MAX_GZIP_STREAMS"]),help="lower the built-in MAX_GZIP_STREAMS limit")
     parser.add_argument("--max-xz-streams",type=positive_limit(namespace["MAX_XZ_STREAMS"]),help="lower the built-in MAX_XZ_STREAMS limit")
+    parser.add_argument("--max-tar-extension-bytes",type=positive_limit(namespace["MAX_TAR_EXTENSION_BYTES"]),help="lower the built-in MAX_TAR_EXTENSION_BYTES limit")
+    parser.add_argument("--max-tar-extension-total",type=positive_limit(namespace["MAX_TAR_EXTENSION_TOTAL"]),help="lower the built-in MAX_TAR_EXTENSION_TOTAL limit")
+    parser.add_argument("--max-tar-extension-depth",type=positive_limit(namespace["MAX_TAR_EXTENSION_DEPTH"]),help="lower the built-in MAX_TAR_EXTENSION_DEPTH limit")
     args=parser.parse_args()
     files=candidates(args.input,namespace.get("MAX_STAGE_ENTRIES",8192))
     overrides={}
@@ -64,6 +67,9 @@ def archive_main(namespace):
     if args.max_path_metadata_bytes is not None: overrides["MAX_PATH_METADATA"]=args.max_path_metadata_bytes
     if args.max_gzip_streams is not None: overrides["MAX_GZIP_STREAMS"]=args.max_gzip_streams
     if args.max_xz_streams is not None: overrides["MAX_XZ_STREAMS"]=args.max_xz_streams
+    if args.max_tar_extension_bytes is not None: overrides["MAX_TAR_EXTENSION_BYTES"]=args.max_tar_extension_bytes
+    if args.max_tar_extension_total is not None: overrides["MAX_TAR_EXTENSION_TOTAL"]=args.max_tar_extension_total
+    if args.max_tar_extension_depth is not None: overrides["MAX_TAR_EXTENSION_DEPTH"]=args.max_tar_extension_depth
     results=[]
     with scoped_limits(namespace,overrides):
         for file in files:

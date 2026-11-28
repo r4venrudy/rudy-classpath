@@ -58,3 +58,15 @@ class ArchiveBudgetCommands(unittest.TestCase):
         self.command(path,'--max-xz-streams',2)
         self.rejection_restores(path,'--max-xz-streams','MAX_XZ_STREAMS',1,4096)
         self.assertEqual(guard.verify(path),(1,7))
+
+    def test_tar_extension_policies(self):
+        extension=tar_record('extension',pax(),tarfile.XHDTYPE)
+        raw=extension*2+tar_record('payload')+bytes(1024);path=self.folder/'metadata.tar.gz'
+        path.write_bytes(gzip.compress(raw))
+        self.command(path,'--max-tar-extension-bytes',len(pax()),'--max-tar-extension-total',len(extension)*2,'--max-tar-extension-depth',2)
+        for flag,key,value,hard in (
+            ('--max-tar-extension-bytes','MAX_TAR_EXTENSION_BYTES',len(pax())-1,1024*1024),
+            ('--max-tar-extension-total','MAX_TAR_EXTENSION_TOTAL',len(extension)*2-1,16*1024*1024),
+            ('--max-tar-extension-depth','MAX_TAR_EXTENSION_DEPTH',1,32)):
+            self.rejection_restores(path,flag,key,value,hard)
+        self.assertEqual(guard.verify(path),(1,7))
