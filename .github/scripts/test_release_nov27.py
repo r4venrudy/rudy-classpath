@@ -70,3 +70,10 @@ class ArchiveBudgetCommands(unittest.TestCase):
             ('--max-tar-extension-depth','MAX_TAR_EXTENSION_DEPTH',1,32)):
             self.rejection_restores(path,flag,key,value,hard)
         self.assertEqual(guard.verify(path),(1,7))
+
+    def test_zip_directory_budget_before_allocation(self):
+        with self.archive.open('rb') as stream:directory_size=zipfile._EndRecData(stream)[zipfile._ECD_SIZE]
+        self.command(self.archive,'--max-zip-directory-bytes',directory_size)
+        with patch.object(release_zip.zipfile,'ZipFile',side_effect=AssertionError('allocated ZIP metadata before directory budget')):
+            self.rejection_restores(self.archive,'--max-zip-directory-bytes','MAX_ZIP_DIRECTORY_BYTES',directory_size-1,64*1024*1024)
+        self.assertEqual(guard.verify(self.archive),(2,14))

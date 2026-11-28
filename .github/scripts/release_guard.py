@@ -9,6 +9,7 @@ MAX_ARCHIVE=512*1024*1024
 MAX_MEMBER=512*1024*1024
 MAX_TOTAL=2*1024*1024*1024
 MAX_ENTRIES=100_000
+MAX_ZIP_DIRECTORY_BYTES=64*1024*1024
 MAX_STAGE_ENTRIES=8192
 MAX_PATH_METADATA=32*1024*1024
 
@@ -325,7 +326,7 @@ def verify(path):
                 if actual>size:raise ValueError('member exceeds declared size')
         if actual!=size:raise ValueError('member is truncated')
     if path.name.lower().endswith(('.zip','.jar','.nupkg','.whl')):
-        with path.open("rb") as package, open_zip(package,max_entries=MAX_ENTRIES) as archive:
+        with path.open("rb") as package, open_zip(package,max_entries=MAX_ENTRIES,max_directory_bytes=MAX_ZIP_DIRECTORY_BYTES) as archive:
             if len(archive.infolist())>MAX_ENTRIES:raise ValueError('too many archive records')
             validate_paths([(m.orig_filename,m.is_dir(),stat.S_ISLNK(m.external_attr>>16),(m.external_attr>>16)&0o170000 not in (0,stat.S_IFREG,stat.S_IFDIR,stat.S_IFLNK)) for m in archive.infolist()])
             members = archive.infolist()

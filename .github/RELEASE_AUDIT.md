@@ -55,3 +55,9 @@ ZIP `--max-entries` is checked against the footer before standard ZIP directory-
 `--max-xz-streams N` limits concatenated XZ streams, including empty streams. The default ceiling remains 4096; the decoder memory cap and stream-padding profile continue to apply.
 
 `--max-tar-extension-bytes N`, `--max-tar-extension-total N` and `--max-tar-extension-depth N` lower individual extension payload, aggregate padded metadata and recursive extension ceilings. Ordinary file payload limits remain separate.
+
+`--max-zip-directory-bytes N` lowers the ZIP central-directory byte limit before standard directory-object allocation. Per-invocation limits must be positive, can only lower built-in ceilings and are restored after success or failure. These overrides are for the command interface; hold inputs immutable during the audit.
+
+```sh
+python .github/scripts/release_guard.py dist --json --max-entries 5000 --max-gzip-streams 32 --max-xz-streams 16 --max-path-metadata-bytes 8388608 --max-tar-extension-depth 8 --max-zip-directory-bytes 8388608
+```
