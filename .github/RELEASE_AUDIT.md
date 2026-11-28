@@ -43,3 +43,7 @@ python .github/scripts/release_guard.py dist --json --max-archive-bytes 67108864
 python .github/scripts/release_checksums.py dist/SHA256SUMS.txt --json --verify-archives
 python .github/scripts/release_checksums.py dist --output audit.json --max-total-bytes 268435456
 ```
+
+## Metadata and compression policies
+
+ZIP `--max-entries` is checked against the footer before standard ZIP directory-object allocation. The built-in ZIP parser ceiling still applies.

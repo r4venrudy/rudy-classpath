@@ -40,7 +40,8 @@ def validate_zip64_end(stream, classic_offset, footer):
         raise ValueError("ZIP64 locator disk count or end-record offset disagrees")
 
 
-def open_zip(stream):
+def open_zip(stream, *, max_entries=None):
+    entry_limit=MAX_DIRECTORY_ENTRIES if max_entries is None else min(MAX_DIRECTORY_ENTRIES,max_entries)
     stream.seek(0, 2)
     size = stream.tell()
     # Use the same classic/ZIP64 interpretation as ZipFile.
@@ -64,7 +65,7 @@ def open_zip(stream):
     count = footer[zipfile._ECD_ENTRIES_TOTAL]
     if footer[zipfile._ECD_DISK_NUMBER] or footer[zipfile._ECD_DISK_START] or footer[zipfile._ECD_ENTRIES_THIS_DISK] != count:
         raise ValueError("ZIP disk or entry count is inconsistent")
-    if footer[zipfile._ECD_SIZE] > MAX_DIRECTORY_BYTES or count > MAX_DIRECTORY_ENTRIES:
+    if footer[zipfile._ECD_SIZE] > MAX_DIRECTORY_BYTES or count > entry_limit:
         raise ValueError("ZIP directory exceeds resource limits")
     directory_size = footer[zipfile._ECD_SIZE]
     directory_end = footer[zipfile._ECD_LOCATION]

@@ -322,7 +322,7 @@ def verify(path):
                 if actual>size:raise ValueError('member exceeds declared size')
         if actual!=size:raise ValueError('member is truncated')
     if path.name.lower().endswith(('.zip','.jar','.nupkg','.whl')):
-        with path.open("rb") as package, open_zip(package) as archive:
+        with path.open("rb") as package, open_zip(package,max_entries=MAX_ENTRIES) as archive:
             if len(archive.infolist())>MAX_ENTRIES:raise ValueError('too many archive records')
             validate_paths([(m.orig_filename,m.is_dir(),stat.S_ISLNK(m.external_attr>>16),(m.external_attr>>16)&0o170000 not in (0,stat.S_IFREG,stat.S_IFDIR,stat.S_IFLNK)) for m in archive.infolist()])
             members = archive.infolist()
