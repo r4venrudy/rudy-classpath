@@ -44,3 +44,10 @@ class ArchiveBudgetCommands(unittest.TestCase):
     def test_path_metadata_budget(self):
         self.command(self.archive,'--max-path-metadata-bytes',1000)
         self.rejection_restores(self.archive,'--max-path-metadata-bytes','MAX_PATH_METADATA',1,32*1024*1024)
+
+    def test_gzip_stream_policy(self):
+        raw=tar_record('payload')+bytes(1024);path=self.folder/'fixture.tar.gz'
+        path.write_bytes(gzip.compress(raw[:1024])+gzip.compress(raw[1024:]))
+        self.command(path,'--max-gzip-streams',2)
+        self.rejection_restores(path,'--max-gzip-streams','MAX_GZIP_STREAMS',1,4096)
+        self.assertEqual(guard.verify(path),(1,7))

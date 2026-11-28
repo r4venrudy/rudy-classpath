@@ -49,3 +49,5 @@ python .github/scripts/release_checksums.py dist --output audit.json --max-total
 ZIP `--max-entries` is checked against the footer before standard ZIP directory-object allocation. The built-in ZIP parser ceiling still applies.
 
 `--max-path-metadata-bytes N` lowers the work budget for distinct normalized path prefixes and spelling metadata. This bounds charged indexing work, not exact allocator memory or RSS.
+
+`--max-gzip-streams N` limits concatenated gzip members, including empty members. The default ceiling remains 4096. Codec headers, footers and total decoded bytes are still checked.

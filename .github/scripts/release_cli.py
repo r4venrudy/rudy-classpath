@@ -52,6 +52,7 @@ def archive_main(namespace):
     parser.add_argument("--max-member-bytes",type=positive_limit(namespace["MAX_MEMBER"]),help="lower the built-in MAX_MEMBER limit")
     parser.add_argument("--max-entries",type=positive_limit(namespace["MAX_ENTRIES"]),help="lower the built-in MAX_ENTRIES limit")
     parser.add_argument("--max-path-metadata-bytes",type=positive_limit(namespace["MAX_PATH_METADATA"]),help="lower the built-in MAX_PATH_METADATA limit")
+    parser.add_argument("--max-gzip-streams",type=positive_limit(namespace["MAX_GZIP_STREAMS"]),help="lower the built-in MAX_GZIP_STREAMS limit")
     args=parser.parse_args()
     files=candidates(args.input,namespace.get("MAX_STAGE_ENTRIES",8192))
     overrides={}
@@ -60,6 +61,7 @@ def archive_main(namespace):
     if args.max_member_bytes is not None: overrides["MAX_MEMBER"]=args.max_member_bytes
     if args.max_entries is not None: overrides["MAX_ENTRIES"]=args.max_entries
     if args.max_path_metadata_bytes is not None: overrides["MAX_PATH_METADATA"]=args.max_path_metadata_bytes
+    if args.max_gzip_streams is not None: overrides["MAX_GZIP_STREAMS"]=args.max_gzip_streams
     results=[]
     with scoped_limits(namespace,overrides):
         for file in files:
