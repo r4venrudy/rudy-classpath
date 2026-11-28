@@ -61,3 +61,5 @@ ZIP `--max-entries` is checked against the footer before standard ZIP directory-
 ```sh
 python .github/scripts/release_guard.py dist --json --max-entries 5000 --max-gzip-streams 32 --max-xz-streams 16 --max-path-metadata-bytes 8388608 --max-tar-extension-depth 8 --max-zip-directory-bytes 8388608
 ```
+
+`--max-envelope-bytes N` caps the entire decoded gzip/XZ TAR envelope, including metadata records, alignment padding and end records. It does not replace per-file or aggregate payload ceilings. The effective ceiling is the lower of this value and the existing payload-plus-overhead bound. ZIP inputs do not have a TAR envelope.

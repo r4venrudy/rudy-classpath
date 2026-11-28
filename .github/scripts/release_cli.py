@@ -58,6 +58,7 @@ def archive_main(namespace):
     parser.add_argument("--max-tar-extension-total",type=positive_limit(namespace["MAX_TAR_EXTENSION_TOTAL"]),help="lower the built-in MAX_TAR_EXTENSION_TOTAL limit")
     parser.add_argument("--max-tar-extension-depth",type=positive_limit(namespace["MAX_TAR_EXTENSION_DEPTH"]),help="lower the built-in MAX_TAR_EXTENSION_DEPTH limit")
     parser.add_argument("--max-zip-directory-bytes",type=positive_limit(namespace["MAX_ZIP_DIRECTORY_BYTES"]),help="lower the built-in MAX_ZIP_DIRECTORY_BYTES limit")
+    parser.add_argument("--max-envelope-bytes",type=positive_limit(namespace["MAX_ENVELOPE_BYTES"]),help="lower the total decoded TAR envelope ceiling")
     args=parser.parse_args()
     files=candidates(args.input,namespace.get("MAX_STAGE_ENTRIES",8192))
     overrides={}
@@ -72,6 +73,7 @@ def archive_main(namespace):
     if args.max_tar_extension_total is not None: overrides["MAX_TAR_EXTENSION_TOTAL"]=args.max_tar_extension_total
     if args.max_tar_extension_depth is not None: overrides["MAX_TAR_EXTENSION_DEPTH"]=args.max_tar_extension_depth
     if args.max_zip_directory_bytes is not None: overrides["MAX_ZIP_DIRECTORY_BYTES"]=args.max_zip_directory_bytes
+    if args.max_envelope_bytes is not None: overrides["MAX_ENVELOPE_BYTES"]=args.max_envelope_bytes
     results=[]
     with scoped_limits(namespace,overrides):
         for file in files:

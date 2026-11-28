@@ -77,3 +77,11 @@ class ArchiveBudgetCommands(unittest.TestCase):
         with patch.object(release_zip.zipfile,'ZipFile',side_effect=AssertionError('allocated ZIP metadata before directory budget')):
             self.rejection_restores(self.archive,'--max-zip-directory-bytes','MAX_ZIP_DIRECTORY_BYTES',directory_size-1,64*1024*1024)
         self.assertEqual(guard.verify(self.archive),(2,14))
+
+    def test_decoded_envelope_policy(self):
+        raw=tar_record('payload')+bytes(1024)
+        for suffix,compress in (('gz',gzip.compress),('xz',lzma.compress)):
+            path=self.folder/('envelope.tar.'+suffix);path.write_bytes(compress(raw))
+            self.command(path,'--max-envelope-bytes',len(raw))
+            self.rejection_restores(path,'--max-envelope-bytes','MAX_ENVELOPE_BYTES',len(raw)-1,2*1024*1024*1024+128*1024*1024)
+            self.assertEqual(guard.verify(path),(1,7))

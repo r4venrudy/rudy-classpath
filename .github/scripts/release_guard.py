@@ -9,6 +9,7 @@ MAX_ARCHIVE=512*1024*1024
 MAX_MEMBER=512*1024*1024
 MAX_TOTAL=2*1024*1024*1024
 MAX_ENTRIES=100_000
+MAX_ENVELOPE_BYTES=2*1024*1024*1024+128*1024*1024
 MAX_ZIP_DIRECTORY_BYTES=64*1024*1024
 MAX_STAGE_ENTRIES=8192
 MAX_PATH_METADATA=32*1024*1024
@@ -150,7 +151,7 @@ def verify_gzip_envelope(path, limit):
 def verify_compression_envelope(path):
     # TAR iteration can finish at its end marker without reading the codec footer.
     # Limit all decoded bytes, including headers, padding and trailing data.
-    limit = MAX_TOTAL + 128 * 1024 * 1024
+    limit = min(MAX_ENVELOPE_BYTES, MAX_TOTAL + 128 * 1024 * 1024)
     if path.name.lower().endswith(".tar.xz"):
         return verify_xz_envelope(path, limit)
     return verify_gzip_envelope(path, limit)
