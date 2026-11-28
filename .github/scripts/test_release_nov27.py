@@ -40,3 +40,7 @@ class ArchiveBudgetCommands(unittest.TestCase):
                 with self.assertRaises(ValueError):guard.verify(self.archive)
         self.assertEqual(guard.verify(self.archive),(2,14))
         self.command(self.archive,'--max-entries',2)
+
+    def test_path_metadata_budget(self):
+        self.command(self.archive,'--max-path-metadata-bytes',1000)
+        self.rejection_restores(self.archive,'--max-path-metadata-bytes','MAX_PATH_METADATA',1,32*1024*1024)
